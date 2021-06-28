@@ -2,9 +2,6 @@
 TiChange 是一个能让你快速将csv文件适配 tidb-lightning csv 文件格式要求的工具。
 ```shell
 [tidb@tidb-51-pd lightning]$ ./TiChange_for_uas.sh -h
----------------------------------------------------------------------------
-------------  TiChange starting  ------------------------------------------
----------------------------------------------------------------------------
 Auther    : jan su
 Intruduce : TiChange 是一个能让你快速将csv文件适配 tidb-lightning csv 文件格式要求的工具，如有任何 BUG 请及时反馈，作者将及时修复！
  
