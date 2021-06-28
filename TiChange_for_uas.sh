@@ -31,10 +31,6 @@ TEMP=`getopt -o i:o:s:m:d:n:h --long help,input-file:,operate-path:,schema-meta:
 # Note the quotes around `$TEMP': they are essential!
 eval set -- "$TEMP"
 
-# Print information on terminal
-echo "---------------------------------------------------------------------------"
-echo "------------  TiChange starting  ------------------------------------------"
-echo "---------------------------------------------------------------------------"
 
 while true ; do
         case "$1" in
@@ -57,6 +53,10 @@ while true ; do
         esac
 done
 
+# Print information on terminal
+echo "---------------------------------------------------------------------------"
+echo "------------  TiChange starting  ------------------------------------------"
+echo "---------------------------------------------------------------------------"
 
 # Change input csv file to "mofidy_dir" for operating
 cp ${Source_oper_file} ${TiChange_oper_file}
