@@ -84,3 +84,24 @@ MySQL [jan]> select * from Tichange_test;
 
 ## Demo-NULL值处理
 
+```shell
+[tidb@tidb-51-pd lightning]$ ./TiChange_for_lightning.sh  -i '/home/tidb/lightning/examples/eg_nonstanderd/TiChange_test_nonstanderd.csv'   -o '/home/tidb/lightning/examples/eg_nonstanderd/test'   -m 'jan.TiChange_test'  -s '||'   -d ''
+Option i == /home/tidb/lightning/examples/eg_null/TiChange_test_null.csv
+Option o == /home/tidb/lightning/examples/eg_null/test
+Option s == jan.TiChange_test
+Option s == ||
+---------------------------------------------------------------------------
+------------  TiChange starting  ------------------------------------------
+---------------------------------------------------------------------------
+------------  using below information for tidb-lightning.toml  ------------
+---------------------------------------------------------------------------
+Please write the string path to tidb-lightning.toml config file!!!
+and ,delete the dealed files by hand after imported data into database!!!
+
+
+[mydumper]
+data-source-dir = "/home/tidb/lightning/examples/eg_null/test/64dc8d7_operating_dir"
+[mydumper]
+no-schema = true
+---------------------------------------------------------------------------
+```

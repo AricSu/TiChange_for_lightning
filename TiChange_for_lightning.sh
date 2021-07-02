@@ -73,7 +73,8 @@ cp ${Source_oper_file} ${TiChange_oper_file}
 
 # Deal with TiChange_oper_file turned into adopted format of lightning
 # Deal with the delimiter of files
-if [ ${TiChange_delimiter} == '' ]; then
+if [ ! ${TiChange_delimiter} ]; then
+        echo "-----" ${TiChange_delimiter} "----"
         # if delimiter is null and separator is tab, blankspace or others
         TiChange_delimiter_up_end_pattern="s#^|\$#\"#g"
         sed -ri ${TiChange_delimiter_up_end_pattern} ${TiChange_oper_file} 
