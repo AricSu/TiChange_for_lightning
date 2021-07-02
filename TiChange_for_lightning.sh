@@ -5,7 +5,7 @@ function TiChange_help(){
    echo "Usage: ${0##*/} [option] [parameter]"
    echo "option: -i --input-file          [input_csv_path]          |               | 需要处理的csv文件路径;"
    echo "        -o --operate-path        [operate_dir_path]        |               | 需要处理csv文件的，空间足够的文件夹路径;"
-   echo "        -m --schema-meta         [schema_meta]             |               | 需要将要导入 csv 文件数据库中所属对象信息，eg: -m schema_name.table_name;"
+   echo "        -m --schema-meta         [schema_meta]             |               | 需要指定库中 csv 文件所属对象信息，eg: -m schema_name.table_name;"
    echo "        -s --separator_import    [separator_import_format] |(default: ',' )| 需要指定当前 csv 文件字段分隔符，eg: -s '||' TiChange 自动将其转换为 \",\" : 'A'||'B'--> 'A','B' ;"
    echo "        -d --delimiter_import    [delimiter_import_format] |(default: '\"' )| 需要指定当前 csv 文件引用定界符，eg: -d  ''' TiChange 自动将其转换为 '\"' : 'ABC'   -->  \"ABC\" ;"
    echo "        -n --null_import         [null_import_format]      |(default: '\N')| 需要指定解析 csv 文件中字段值为 NULL 的字符， eg: '\\N' 导入 TiDB 中会被解析为 NULL ;"
@@ -37,6 +37,7 @@ while true ; do
                 -i|--input-file)          echo "Option i == ${2}" ; 
 			Source_oper_file=${2}; shift 2;;
                 -o|--operate-path)        echo "Option o == ${2}" ;
+                        TiChange_check_dir=${2}
 			TiChange_oper_file=${2}/TiChange_operating_csv_$perfix_hash_time;
                         TiChange_oper_dir=${2}/${perfix_hash_time}_operating_dir; shift 2;;
                 -m|--schema-meta)         echo "Option s == ${2}" ;
@@ -53,24 +54,41 @@ while true ; do
         esac
 done
 
+# Check the file or dir
+if [ ! -d ${TiChange_check_dir} ] || [ ! -f ${Source_oper_file} ]; then
+        echo "The \"operate-path\" or \"input-file\" isn't exists, please retry it using right parameter!"
+        exit 1
+fi
+
 # Print information on terminal
 echo "---------------------------------------------------------------------------"
 echo "------------  TiChange starting  ------------------------------------------"
-echo "---------------------------------------------------------------------------"
 
 # Change input csv file to "mofidy_dir" for operating
 cp ${Source_oper_file} ${TiChange_oper_file}
 
 
 # Deal with TiChange_oper_file turned into adopted format of lightning
-# 如果 delimiter separator 他俩的组合还不知道怎么处理
-sed -ri 's#^|$#"#g' ${TiChange_oper_file}
-sed -ri 's#$#&,"","","","","","",""#g' ${TiChange_oper_file}
-sed -i 's#||#","#g' ${TiChange_oper_file}
+# Deal with the delimiter of files
+if [ ${TiChange_null} == '""' ]; then
+        # if delimiter is null and separator is tab, blankspace or others
+        TiChange_delimiter_up_end_pattern="s#^|\$#\"#g"
+        sed -ri ${TiChange_delimiter_up_end_pattern} ${TiChange_oper_file} 
+        TiChange_delimiter_interal_pattern="s#${TiChange_separator}#\",\"#g"
+        sed -i ${TiChange_delimiter_interal_pattern} ${TiChange_oper_file}
+else
+        # if delimiter is not null
+        TiChange_delimiter_up_end_pattern="s#^${TiChange_delimiter}|\$${TiChange_delimiter}#\"#g"
+        sed -ri ${TiChange_delimiter_up_end_pattern} ${TiChange_oper_file} 
+        TiChange_delimiter_interal_pattern="s#${TiChange_delimiter}${TiChange_separator}${TiChange_delimiter}#\",\"#g"
+        sed -i ${TiChange_delimiter_interal_pattern} ${TiChange_oper_file}
+fi
+
 
 # Deal with NULL value using sed Command
-# 替换空值还不知道怎么处理
-if [ ${TiChange_null} ]; then
+if [ ${TiChange_null} == '""' ]; then
+        sed -i "s#${TiChange_null}#\\\\N#g" ${TiChange_oper_file}
+else
         sed -i "s#\"${TiChange_null}\"#\\\\N#g" ${TiChange_oper_file}
 fi
 
