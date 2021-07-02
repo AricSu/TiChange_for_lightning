@@ -25,22 +25,26 @@ option: -i --input-file          [input_csv_path]          |               | 需
 
 
 
-## Demo 
+## Demo-标准CSV
 首先,使用 TiChange_for_lightning.sh 将一整块 csv 文件处理为多个 96MB csv,将 terminal 输出的 data-source-dir 路径填写至 tidb-lightning.toml。随后，便可按 TiDB 官网要求配置好后启动进程，导入数据。
 ```shell
-[tidb@tidb-51-pd lightning]$ ./TiChange_for_uas.sh 
-      -i '/home/tidb/lightning/54tr.54tr' \
-      -o '/home/tidb/lightning/test' \
-      -m 'jan.risk_factor' \
-      -n ''
+[tidb@tidb-51-pd examples]$ mysql -uroot -P4000 -h192.168.169.61 -A jan
 
+MySQL [jan]> create table TiChange_test(id int ,name varchar(20));
+
+[tidb@tidb-51-pd eg_standerd]$ cat TiChange_test_standerd.csv 
+"1","jan_standerd_csv"
+
+[tidb@tidb-51-pd lightning]$ ./TiChange_for_lightning.sh \
+      -i '/home/tidb/lightning/examples/eg_standerd/TiChange_test_standerd.csv' \
+      -o '/home/tidb/lightning/examples/eg_standerd/test' \
+      -m 'jan.TiChange_test'
+
+Option i == /home/tidb/lightning/examples/eg_standerd/TiChange_test_standerd.csv
+Option o == /home/tidb/lightning/examples/eg_standerd/test
+Option s == jan.TiChange_test
 ---------------------------------------------------------------------------
 ------------  TiChange starting  ------------------------------------------
----------------------------------------------------------------------------
-Option i == /home/tidb/lightning/54tr.54tr
-Option o == /home/tidb/lightning/test
-Option s == jan.risk_factor
-Option n == 
 ---------------------------------------------------------------------------
 ------------  using below information for tidb-lightning.toml  ------------
 ---------------------------------------------------------------------------
@@ -49,11 +53,34 @@ and ,delete the dealed files by hand after imported data into database!!!
 
 
 [mydumper]
-data-source-dir = "/home/tidb/lightning/test/633dabe_operating_dir"
+data-source-dir = "/home/tidb/lightning/examples/eg_standerd/test/e78e341_operating_dir"
 [mydumper]
 no-schema = true
 ---------------------------------------------------------------------------
 
 
-tiup tidb-lightning --config ./tidb-lightning.toml
+[tidb@tidb-51-pd eg_standerd]$ tiup tidb-lightning --config ./tidb-lightning.toml
+Found tidb-lightning newer version:
+......
+......
+Verbose debug logs will be written to tidb-lightning.log
+tidb lightning exit
+
+[tidb@tidb-51-pd eg_standerd]$ mysql -uroot -P4000 -h192.168.169.61 -A jan
+
+MySQL [jan]> select * from Tichange_test;
++------+------------------+
+| id   | name             |
++------+------------------+
+|    1 | jan_standerd_csv |
++------+------------------+
 ```
+
+
+
+
+## Demo-非标准CSV
+
+
+## Demo-NULL值处理
+

@@ -20,7 +20,7 @@ driver = "file"
 
 [mydumper]
 no-schema = true
-data-source-dir = "/home/tidb/lightning/test/2d700e7_operating_dir"
+data-source-dir = "/home/tidb/lightning/examples/eg_standerd/test/e78e341_operating_dir"
 
 [mydumper.csv]
 separator = ','

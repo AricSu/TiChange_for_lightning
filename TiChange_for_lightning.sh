@@ -31,6 +31,10 @@ TEMP=`getopt -o i:o:s:m:d:n:h --long help,input-file:,operate-path:,schema-meta:
 # Note the quotes around `$TEMP': they are essential!
 eval set -- "$TEMP"
 
+# Default value
+TiChange_separator=','
+TiChange_delimiter='"'
+TiChange_null='\N'
 
 while true ; do
         case "$1" in
@@ -67,16 +71,15 @@ echo "------------  TiChange starting  -----------------------------------------
 # Change input csv file to "mofidy_dir" for operating
 cp ${Source_oper_file} ${TiChange_oper_file}
 
-
 # Deal with TiChange_oper_file turned into adopted format of lightning
 # Deal with the delimiter of files
-if [ ${TiChange_null} == '""' ]; then
+if [ ${TiChange_delimiter} == '' ]; then
         # if delimiter is null and separator is tab, blankspace or others
         TiChange_delimiter_up_end_pattern="s#^|\$#\"#g"
         sed -ri ${TiChange_delimiter_up_end_pattern} ${TiChange_oper_file} 
         TiChange_delimiter_interal_pattern="s#${TiChange_separator}#\",\"#g"
         sed -i ${TiChange_delimiter_interal_pattern} ${TiChange_oper_file}
-else
+elif [ ${TiChange_delimiter} != '"' ]; then
         # if delimiter is not null
         TiChange_delimiter_up_end_pattern="s#^${TiChange_delimiter}|\$${TiChange_delimiter}#\"#g"
         sed -ri ${TiChange_delimiter_up_end_pattern} ${TiChange_oper_file} 
@@ -88,7 +91,7 @@ fi
 # Deal with NULL value using sed Command
 if [ ${TiChange_null} == '""' ]; then
         sed -i "s#${TiChange_null}#\\\\N#g" ${TiChange_oper_file}
-else
+elif [ ${TiChange_null} != '\N' ]; then
         sed -i "s#\"${TiChange_null}\"#\\\\N#g" ${TiChange_oper_file}
 fi
 
@@ -123,5 +126,4 @@ echo "no-schema = true"
 echo "---------------------------------------------------------------------------"
 
 # Delete all of tmp splited file
-#ls ${2} | grep ${perfix_hash_time} |xargs rm -rf 
-
+#ls ${2} | grep ${perfix_hash_time} |xargs rm -rf
