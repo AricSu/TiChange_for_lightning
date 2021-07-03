@@ -6,8 +6,8 @@ function TiChange_help(){
    echo "option: -i --input-file          [input_csv_path]          |               | 需要处理的csv文件路径;"
    echo "        -o --operate-path        [operate_dir_path]        |               | 需要处理csv文件的，空间足够的文件夹路径;"
    echo "        -m --schema-meta         [schema_meta]             |               | 需要指定库中 csv 文件所属对象信息，eg: -m schema_name.table_name;"
-   echo "        -s --separator_import    [separator_import_format] |(default: ',' )| 需要指定当前 csv 文件字段分隔符，eg: -s '||' TiChange 自动将其转换为 \",\" : 'A'||'B'--> 'A','B' ;"
-   echo "        -d --delimiter_import    [delimiter_import_format] |(default: '\"' )| 需要指定当前 csv 文件引用定界符，eg: -d  ''' TiChange 自动将其转换为 '\"' : 'ABC'   -->  \"ABC\" ;"
+   echo "        -s --separator_import    [separator_import_format] |(default: ',' )| 需要指定当前 csv 文件字段分隔符，eg: -s '||' TiChange 自动将其转换为 \",\" : \"A\"||\"B\" --> \"A\",\"B\" ;"
+   echo "        -d --delimiter_import    [delimiter_import_format] |(default: '\"' )| 需要指定当前 csv 文件引用定界符，eg: -d  ''  TiChange 自动将其转换为 '\"' :    ABC   -->  \"ABC\" ;"
    echo "        -n --null_import         [null_import_format]      |(default: '\N')| 需要指定解析 csv 文件中字段值为 NULL 的字符， eg: '\\N' 导入 TiDB 中会被解析为 NULL ;"
    echo "        -h --help                                          |               | 获取关于 TiChange.sh 的操作指引，详细 Demo 请参考 ： https://gitee.com/coresu/ti-change ;"
 }
@@ -74,7 +74,6 @@ cp ${Source_oper_file} ${TiChange_oper_file}
 # Deal with TiChange_oper_file turned into adopted format of lightning
 # Deal with the delimiter of files
 if [ ! ${TiChange_delimiter} ]; then
-        echo "-----" ${TiChange_delimiter} "----"
         # if delimiter is null and separator is tab, blankspace or others
         TiChange_delimiter_up_end_pattern="s#^|\$#\"#g"
         sed -ri ${TiChange_delimiter_up_end_pattern} ${TiChange_oper_file} 
@@ -90,8 +89,8 @@ fi
 
 
 # Deal with NULL value using sed Command
-if [ ${TiChange_null} == '""' ]; then
-        sed -i "s#${TiChange_null}#\\\\N#g" ${TiChange_oper_file}
+if [ ${TiChange_null} ]; then
+        sed -i 's#""#\\N#g' ${TiChange_oper_file}
 elif [ ${TiChange_null} != '\N' ]; then
         sed -i "s#\"${TiChange_null}\"#\\\\N#g" ${TiChange_oper_file}
 fi
@@ -104,7 +103,7 @@ cd ${TiChange_oper_dir}
 split -b 96M ${TiChange_oper_file} -d TiChange_96M
 TiChange_lines_96M=`cat TiChange_96M00 |wc -l`
 rm -rf TiChange_96M*
-split -l ${TiChange_lines_96M} ${TiChange_oper_file}  -d -a 8 ${TiChange_meta_table}.
+split -l `expr ${TiChange_lines_96M} + 1` ${TiChange_oper_file}  -d -a 8 ${TiChange_meta_table}.
 rm -rf ${TiChange_oper_file}
 
 # Change every files to obey the filename named rule of tidb-lightning
