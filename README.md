@@ -171,3 +171,56 @@ MySQL [jan]> select * from TiChange_test;
 |    3 | NULL                |
 +------+---------------------+
 ```
+
+
+## Demo-CSV字段包含\n字符
+对于 csv 文件中含有 "\n" 值导入 TiDB 的显出非预期的行为不是本脚本的问题，是 TiDB 自身行为实现所致，且已有[相关 PR 修复](https://github.com/pingcap/br/pull/1297)，望关注者周知！！！
+```shell
+[tidb@tidb-51-pd lightning]$ ./TiChange_for_lightning.sh  \
+>        -i '/home/tidb/lightning/examples/eg_fields_include_null/TiChange_test_fields_include_null.csv'   \
+>        -o '/home/tidb/lightning/examples/eg_fields_include_null/test'   \
+>        -m 'jan.TiChange_test' 
+Option i == /home/tidb/lightning/examples/eg_fields_include_null/TiChange_test_fields_include_null.csv
+Option o == /home/tidb/lightning/examples/eg_fields_include_null/test
+Option s == jan.TiChange_test
+---------------------------------------------------------------------------
+------------  TiChange starting  ------------------------------------------
+---------------------------------------------------------------------------
+------------  using below information for tidb-lightning.toml  ------------
+---------------------------------------------------------------------------
+Please write the string path to tidb-lightning.toml config file!!!
+and ,delete the dealed files by hand after imported data into database!!!
+
+
+[mydumper]
+data-source-dir = "/home/tidb/lightning/examples/eg_fields_include_null/test/4f9407f_operating_dir"
+[mydumper]
+no-schema = true
+---------------------------------------------------------------------------
+
+
+[tidb@tidb-51-pd lightning]$ cd examples/eg_fields_include_null/
+
+
+[tidb@tidb-51-pd eg_fields_include_null]$ tiup tidb-lightning --config ./tidb-lightning.toml
+
+
+MySQL [jan]> select * from TiChange_test;
++------+---------------------+
+| id   | name                |
++------+---------------------+
+|    1 | jan_standerd_csv    |
+|    2 | jan_nonstanderd_csv |
+|    3 | NULL                |
+|    4 | 123123
+sdffsdfdf    |
++------+---------------------+
+
+MySQL [jan]> select * from TiChange_test where id =4;
++------+------------------+
+| id   | name             |
++------+------------------+
+|    4 | 123123
+sdffsdfdf |
++------+------------------+
+```
