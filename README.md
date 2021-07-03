@@ -174,7 +174,7 @@ MySQL [jan]> select * from TiChange_test;
 
 
 ## Demo-CSV字段包含\n字符
-对于 csv 文件中含有 "\n" 值导入 TiDB 的显出非预期的行为不是本脚本的问题，是 TiDB 自身行为实现所致，且已有[相关 PR 修复](https://github.com/pingcap/br/pull/1297)，望关注者周知！！！
+对于 csv 文件中含有 "\n" 值导入 TiDB 的显出非预期的行为不是本脚本的问题，是 TiDB 自身行为实现所致，望关注者周知！！！
 ```shell
 [tidb@tidb-51-pd lightning]$ ./TiChange_for_lightning.sh  \
 >        -i '/home/tidb/lightning/examples/eg_fields_include_null/TiChange_test_fields_include_null.csv'   \
