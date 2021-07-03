@@ -1,6 +1,6 @@
 function TiChange_help(){
    echo "Auther    : jan su"
-   echo "Introduce : TiChange 是一个能让你快速将csv文件适配 tidb-lightning csv 文件格式要求的工具，如有任何 BUG 请及时反馈，作者将及时修复！"
+   echo "Introduce : TiChange_for_lightning 是一个能让你快速将csv文件适配 tidb-lightning csv 文件格式要求的工具，如有任何 BUG 请及时反馈，作者将及时修复！"
    echo " "
    echo "Usage: ${0##*/} [option] [parameter]"
    echo "option: -i --input-file          [input_csv_path]          |               | 需要处理的csv文件路径;"
