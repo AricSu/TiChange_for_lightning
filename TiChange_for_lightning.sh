@@ -9,7 +9,7 @@ function TiChange_help(){
    echo "        -s --separator_import    [separator_import_format] |(default: ',' )| 需要指定当前 csv 文件字段分隔符，eg: -s '||' TiChange 自动将其转换为 \",\" : \"A\"||\"B\" --> \"A\",\"B\" ;"
    echo "        -d --delimiter_import    [delimiter_import_format] |(default: '\"' )| 需要指定当前 csv 文件引用定界符，eg: -d  ''  TiChange 自动将其转换为 '\"' :    ABC   -->  \"ABC\" ;"
    echo "        -n --null_import         [null_import_format]      |(default: '\N')| 需要指定解析 csv 文件中字段值为 NULL 的字符， eg: '\\N' 导入 TiDB 中会被解析为 NULL ;"
-   echo "        -h --help                                          |               | 获取关于 TiChange.sh 的操作指引，详细 Demo 请参考 ： https://gitee.com/coresu/ti-change ;"
+   echo "        -h --help                                          |               | 获取关于 TiChange.sh 的操作指引，详细 Demo 请参考 ： https://github.com/jansu-dev/TiChange_for_lightning;"
 }
 
 
