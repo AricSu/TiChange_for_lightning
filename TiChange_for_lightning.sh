@@ -102,7 +102,7 @@ mkdir ${TiChange_oper_dir}
 cd ${TiChange_oper_dir}
 TiChange_lines=`cat ${TiChange_oper_file} |wc -l`
 TiChange_vCore_number=`cat /proc/cpuinfo |grep "processor"|wc -l`
-TiChange_lines_per_file=`expr ${TiChange_lines / ${TiChange_vCore_number}}`
+TiChange_lines_per_file=`expr ${TiChange_lines} / ${TiChange_vCore_number}`
 split -l `expr ${TiChange_lines_per_file} + 1` ${TiChange_oper_file}  -d -a 8 ${TiChange_meta_table}.
 rm -rf ${TiChange_oper_file}
 
