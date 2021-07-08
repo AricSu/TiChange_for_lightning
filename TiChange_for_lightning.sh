@@ -97,13 +97,13 @@ fi
 
 
 # Split the file into many small files, which 
-# is similer to volume of 96M
+# is similer to number of cpu processor(vCore)
 mkdir ${TiChange_oper_dir}
 cd ${TiChange_oper_dir}
-split -b 96M ${TiChange_oper_file} -d TiChange_96M
-TiChange_lines_96M=`cat TiChange_96M00 |wc -l`
-rm -rf TiChange_96M*
-split -l `expr ${TiChange_lines_96M} + 1` ${TiChange_oper_file}  -d -a 8 ${TiChange_meta_table}.
+TiChange_lines=`cat ${TiChange_oper_file} |wc -l`
+TiChange_vCore_number=`cat /proc/cpuinfo |grep "processor"|wc -l`
+TiChange_lines_per_file=`expr ${TiChange_lines / ${TiChange_vCore_number}}`
+split -l `expr ${TiChange_lines_per_file} + 1` ${TiChange_oper_file}  -d -a 8 ${TiChange_meta_table}.
 rm -rf ${TiChange_oper_file}
 
 # Change every files to obey the filename named rule of tidb-lightning
