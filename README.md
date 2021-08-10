@@ -1,6 +1,6 @@
 
 TiChange_for_lightning 是一个能让你快速将csv文件适配 tidb-lightning csv 文件格式要求的工具。遵照 TiDB 官网给出对 CSV 文件的[格式支持](https://docs.pingcap.com/zh/tidb/dev/migrate-from-csv-using-tidb-lightning),本脚本主要功能如下：
-1. 将 csv 文件切分得近乎 96MB 大小;
+1. 切分 csv 文件数与 CPU vCore 数相同;
 2. 适配 lightning 可识别的文件名;
 3. 批量替换当前字段分隔符（separator）为 lightning 默认字段分隔符（','）;
 4. 批量替换当前引用定界符（delimiter）为 lightning 默认引用定界符（'"'）;
