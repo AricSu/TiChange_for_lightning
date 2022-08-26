@@ -44,7 +44,7 @@ while true ; do
                         TiChange_check_dir=${2}
 			TiChange_oper_file=${2}/TiChange_operating_csv_$perfix_hash_time;
                         TiChange_oper_dir=${2}/${perfix_hash_time}_operating_dir; shift 2;;
-                -m|--schema-meta)         echo "Option s == ${2}" ;
+                -m|--schema-meta)         echo "Option m == ${2}" ;
 			TiChange_meta_table=${2}; shift 2;;
                 -s|--separator_import)    echo "Option s == ${2}" ;
 			TiChange_separator=${2}; shift 2;;
