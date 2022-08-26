@@ -9,6 +9,7 @@ function TiChange_help(){
    echo "        -s --separator_import    [separator_import_format] |(default: ',' )| 需要指定当前 csv 文件字段分隔符，eg: -s '||' TiChange 自动将其转换为 \",\" : \"A\"||\"B\" --> \"A\",\"B\" ;"
    echo "        -d --delimiter_import    [delimiter_import_format] |(default: '\"' )| 需要指定当前 csv 文件引用定界符，eg: -d  ''  TiChange 自动将其转换为 '\"' :    ABC   -->  \"ABC\" ;"
    echo "        -n --null_import         [null_import_format]      |(default: '\N')| 需要指定解析 csv 文件中字段值为 NULL 的字符， eg: '\\N' 导入 TiDB 中会被解析为 NULL ;"
+   echo "        -c --collect_dir         [collect_dir]             |(default: '')  | 指定拆分后的csv文件汇总目录，比如拆分多个文件到同一个目录中，再用lightning一次性导入"
    echo "        -h --help                                          |               | 获取关于 TiChange.sh 的操作指引，详细 Demo 请参考 ： https://github.com/jansu-dev/TiChange_for_lightning;"
 }
 
@@ -26,7 +27,7 @@ hash_time=$(date "+%Y%m%d%H%M%S" | tr -d '\n' | md5sum)
 perfix_hash_time=${hash_time:0:7}
 
 # Set TiChange options using getopt lib
-TEMP=`getopt -o i:o:s:m:d:n:h --long help,input-file:,operate-path:,schema-meta:,separator_import:,delimiter_import:,null_import: -- "$@"`
+TEMP=`getopt -o i:o:s:m:d:n:c:h --long help,input-file:,operate-path:,schema-meta:,separator_import:,delimiter_import:,null_import:,collect_dir: -- "$@"`
 
 # Note the quotes around `$TEMP': they are essential!
 eval set -- "$TEMP"
@@ -35,6 +36,7 @@ eval set -- "$TEMP"
 TiChange_separator=','
 TiChange_delimiter='"'
 TiChange_null='\N'
+TiChange_collect_dir=''
 
 while true ; do
         case "$1" in
@@ -52,6 +54,8 @@ while true ; do
 			TiChange_delimiter=${2}; shift 2;;
                 -n|--null_import)         echo "Option n == ${2}" ;
 			TiChange_null=${2}; shift 2;;
+                -c|--collect_dir)         echo "Option c == ${2}" ;
+			TiChange_collect_dir=${2}; shift 2;;
                 -h|--help) TiChange_help; exit 1 ;;
                 --) shift ; break ;;
                 *) echo "Internal error!" ; exit 1 ;;
@@ -112,6 +116,16 @@ for sfile in ${softfiles}
 do
    mv ${sfile} ${sfile}.csv
 done
+
+if [ -n "${TiChange_collect_dir}"]; then   
+   if [ ! -d "${TiChange_collect_dir}" ]; then
+      mkdir -p ${TiChange_collect_dir}
+   fi
+   mv *.csv ${TiChange_collect_dir}/
+   cd -
+   rm -rf ${TiChange_oper_dir}
+   TiChange_oper_dir=${TiChange_collect_dir}
+fi
 
 echo "---------------------------------------------------------------------------"
 echo "------------  using below information for tidb-lightning.toml  ------------"
